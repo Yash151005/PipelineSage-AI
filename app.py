@@ -4,17 +4,25 @@ import json
 import requests
 import streamlit as st
 from datetime import datetime
+from streamlit.errors import StreamlitSecretNotFoundError
 
 st.set_page_config(page_title="PipelineSage AI", page_icon="🛡️", layout="wide")
 
 # PipelineSage AI — single-file Streamlit MVP
 # Configure secrets in .streamlit/secrets.toml or environment variables.
-GITLAB_URL = st.secrets.get("GITLAB_URL", os.getenv("GITLAB_URL", "https://gitlab.com"))
-GITLAB_TOKEN = st.secrets.get("GITLAB_TOKEN", os.getenv("GITLAB_TOKEN", ""))
-GITLAB_PROJECT_ID = st.secrets.get("GITLAB_PROJECT_ID", os.getenv("GITLAB_PROJECT_ID", ""))
-OPENAI_API_KEY = st.secrets.get("OPENAI_API_KEY", os.getenv("OPENAI_API_KEY", ""))
-OPENAI_BASE_URL = st.secrets.get("OPENAI_BASE_URL", os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"))
-OPENAI_MODEL = st.secrets.get("OPENAI_MODEL", os.getenv("OPENAI_MODEL", "gpt-4o-mini"))
+def get_setting(name, default=""):
+    try:
+        return st.secrets.get(name, os.getenv(name, default))
+    except StreamlitSecretNotFoundError:
+        return os.getenv(name, default)
+
+
+GITLAB_URL = get_setting("GITLAB_URL", "https://gitlab.com")
+GITLAB_TOKEN = get_setting("GITLAB_TOKEN")
+GITLAB_PROJECT_ID = get_setting("GITLAB_PROJECT_ID")
+OPENAI_API_KEY = get_setting("OPENAI_API_KEY")
+OPENAI_BASE_URL = get_setting("OPENAI_BASE_URL", "https://api.openai.com/v1")
+OPENAI_MODEL = get_setting("OPENAI_MODEL", "gpt-4o-mini")
 
 BG = "#0b1020"
 st.markdown("""
