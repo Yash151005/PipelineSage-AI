@@ -1,0 +1,13 @@
+image: python:3.11-slim
+
+stages:
+  - validate
+
+validate_app:
+  stage: validate
+  script:
+    - python -m pip install --upgrade pip
+    - python -m pip install -r requirements.txt
+    - python -m py_compile app.py
+  rules:
+    - if: $CI_PIPELINE_SOURCE
